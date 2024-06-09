@@ -28,6 +28,11 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            buildConfigField("String", "API_BASE_URL", "\"https://timetonic.com/\"")
+        }
+
+        debug {
+            buildConfigField("String", "API_BASE_URL", "\"https://timetonic.com/\"")
         }
     }
     compileOptions {
@@ -39,6 +44,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
