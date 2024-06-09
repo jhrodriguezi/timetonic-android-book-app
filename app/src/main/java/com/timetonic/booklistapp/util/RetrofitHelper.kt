@@ -9,6 +9,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
+/**
+ * Helper object for initializing and providing a Retrofit instance configured for Timetonic API calls.
+ */
 object RetrofitHelper {
 
     private val retrofit: Retrofit

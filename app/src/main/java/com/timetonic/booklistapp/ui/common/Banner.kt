@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredWidth
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Warning
@@ -25,12 +23,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.timetonic.booklistapp.ui.theme.BookListAppTheme
 
+/**
+ * Composable function for displaying an error message banner.
+ * @param visibility Whether the banner should be visible.
+ * @param message The error message to display.
+ * @param onClose Callback for when the banner's close button is clicked.
+ */
 @Composable
 fun ColumnScope.BannerErrorMessage(
     visibility: Boolean = false, message: String? = null, onClose: () -> Unit = {}

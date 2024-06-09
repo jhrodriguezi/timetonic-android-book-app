@@ -36,6 +36,12 @@ import com.timetonic.booklistapp.ui.common.TitleText
 import com.timetonic.booklistapp.ui.theme.BookListAppTheme
 import com.timetonic.booklistapp.util.SessionDataStore
 
+/**
+ * Composable function for the login screen.
+ * @param onNavigateToAuthenticatedRoute Callback function to navigate to the authenticated route.
+ * @param timetonicApiRepository The repository for accessing Timetonic API methods.
+ * @param viewModel The view model for handling login functionality.
+ */
 @Composable
 fun LoginScreen(
     onNavigateToAuthenticatedRoute: () -> Unit = {},
@@ -61,7 +67,7 @@ fun LoginScreen(
                 onClose = { viewModel.onEvent(LoginUiEvent.CloseBannerErrorMessage) })
             Spacer(modifier = Modifier.height(BookListAppTheme.dimens.paddingLarge))
             LoginCard(email = viewModel.email,
-                errorFormEmail = loginState.errorFormEmail,
+                errorFormEmail = loginState.errorFormEmail?.let { stringResource(it) },
                 onEmailChange = {
                     viewModel.onEvent(
                         LoginUiEvent.EmailChanged(
@@ -70,7 +76,7 @@ fun LoginScreen(
                     )
                 },
                 password = viewModel.password,
-                errorFormPassword = loginState.errorFormPassword,
+                errorFormPassword = loginState.errorFormPassword?.let { stringResource(it) },
                 onPasswordChange = {
                     viewModel.onEvent(
                         LoginUiEvent.PasswordChanged(
@@ -84,13 +90,23 @@ fun LoginScreen(
     }
 }
 
+/**
+ * Composable function for the login card.
+ * @param email The email entered by the user.
+ * @param errorFormEmail The error message for the email field, if any.
+ * @param onEmailChange Callback function for handling changes to the email field.
+ * @param password The password entered by the user.
+ * @param errorFormPassword The error message for the password field, if any.
+ * @param onPasswordChange Callback function for handling changes to the password field.
+ * @param onSubmit Callback function for submitting the login form.
+ */
 @Composable
 fun LoginCard(
     email: String,
-    @StringRes errorFormEmail: Int?,
+    errorFormEmail: String?,
     onEmailChange: (String) -> Unit,
     password: String,
-    @StringRes errorFormPassword: Int?,
+    errorFormPassword: String?,
     onPasswordChange: (String) -> Unit,
     onSubmit: () -> Unit
 ) {
@@ -124,7 +140,7 @@ fun LoginCard(
                     onValueChange = onEmailChange,
                     label = stringResource(id = R.string.login_email),
                     isError = errorFormEmail != null,
-                    errorText = errorFormEmail?.let { stringResource(it) } ?: "")
+                    errorText = errorFormEmail ?: "")
 
                 PasswordTextField(modifier = Modifier
                     .fillMaxWidth()
@@ -133,11 +149,7 @@ fun LoginCard(
                     onValueChange = onPasswordChange,
                     label = stringResource(id = R.string.login_password_label),
                     isError = errorFormPassword != null,
-                    errorText = errorFormPassword?.let {
-                        stringResource(
-                            it
-                        )
-                    } ?: "",
+                    errorText = errorFormPassword ?: "",
                     imeAction = ImeAction.Done)
 
                 NormalButton(

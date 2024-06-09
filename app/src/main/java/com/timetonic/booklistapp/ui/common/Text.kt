@@ -6,6 +6,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import com.timetonic.booklistapp.ui.theme.BookListAppTheme
 
+/**
+ * Composable function for rendering a title text.
+ * @param modifier The modifier for the text.
+ * @param text The text to display.
+ * @param textAlign The alignment of the text.
+ */
 @Composable
 fun TitleText(
     modifier: Modifier = Modifier,
@@ -21,6 +27,13 @@ fun TitleText(
     )
 }
 
+
+/**
+ * Composable function for rendering a medium title text.
+ * @param modifier The modifier for the text.
+ * @param text The text to display.
+ * @param textAlign The alignment of the text.
+ */
 @Composable
 fun MediumTitleText(
     modifier: Modifier = Modifier,
@@ -36,6 +49,11 @@ fun MediumTitleText(
     )
 }
 
+/**
+ * Composable function for rendering an error text input field.
+ * @param modifier The modifier for the text.
+ * @param text The text to display.
+ */
 @Composable
 fun ErrorTextInputField(
     modifier: Modifier = Modifier,

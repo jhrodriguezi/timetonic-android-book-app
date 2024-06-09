@@ -7,11 +7,18 @@ import com.timetonic.booklistapp.util.Result
 import retrofit2.http.POST
 import retrofit2.http.Query
 
+/**
+ * Enum representing status values.
+ * @property value The string value of the status.
+ */
 enum class Status(val value: String) {
     OK("ok"),
     NOK("nok")
 }
 
+/**
+ * Interface for interacting with the Timetonic API.
+ */
 interface TimetonicApi {
 
     @POST("live/api.php")

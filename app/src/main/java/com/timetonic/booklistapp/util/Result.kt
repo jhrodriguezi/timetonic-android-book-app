@@ -10,11 +10,30 @@ import retrofit2.Retrofit
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 
+/**
+ * Sealed class representing the result of an operation.
+ * @param T The type of data encapsulated in the result.
+ */
 sealed class Result<out T: Any> {
+
+    /**
+     * Represents a successful result containing data of type [T].
+     * @param data The data encapsulated in the success result.
+     */
     data class Success<T: Any>(val data: T) : Result<T>()
+
+    /**
+     * Represents an error result containing a throwable.
+     * @param throwable The throwable encapsulated in the error result.
+     */
     data class Error(val throwable: Throwable) : Result<Nothing>()
 }
 
+/**
+ * Wrapper for a Retrofit Call to return a Result<T>.
+ * @param T The type of data expected from the Retrofit call.
+ * @property proxy The original Retrofit Call object.
+ */
 class ResultCall<T: Any>(
     private val proxy: Call<T>
 ) : Call<Result<T>> {
@@ -52,6 +71,10 @@ class ResultCall<T: Any>(
     override fun timeout(): Timeout = proxy.timeout()
 }
 
+/**
+ * Adapter for Retrofit to convert Call<T> to Call<Result<T>>.
+ * @property resultType The type of data expected in the Result.
+ */
 class ResultCallAdapter(
     private val resultType: Type
 ) : CallAdapter<Type, Call<Result<Type>>> {
@@ -62,6 +85,9 @@ class ResultCallAdapter(
     }
 }
 
+/**
+ * Factory for creating ResultCallAdapter instances.
+ */
 class ResultCallAdapterFactory private constructor() : CallAdapter.Factory() {
     override fun get(
         returnType: Type,

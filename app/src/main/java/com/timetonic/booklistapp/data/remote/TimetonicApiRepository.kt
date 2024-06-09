@@ -8,15 +8,33 @@ import com.timetonic.booklistapp.util.RetrofitHelper
 import com.timetonic.booklistapp.util.SessionManager
 import kotlinx.coroutines.flow.first
 
+/**
+ * Repository for interacting with the Timetonic API.
+ * @property timetonicApi The Timetonic API service.
+ * @property sessionManager The session manager for managing user sessions.
+ */
 class TimetonicApiRepository(
     private val timetonicApi: TimetonicApi = RetrofitHelper.getTimetonicService(),
     private val sessionManager: SessionManager
 ) : TimetonicRepository {
+
     companion object {
+        /**
+         * The API version used for Timetonic requests.
+         */
         private val API_VERSION: String
             get() = "6.49q/6.49"
     }
 
+    /**
+     * Logs in the user and retrieves a session key.
+     * It goes through the following steps:
+     * 1. Creates an application key.
+     * 2. Creates an OAuth key.
+     * 3. Creates a session key.
+     * @param dataRequest The login parameters.
+     * @return Result containing the session key response.
+     */
     override suspend fun logIn(dataRequest: LogInParams): Result<SessKeyResponse> {
         when (val appKeyResult = timetonicApi.createAppKey(
             appname = "android",

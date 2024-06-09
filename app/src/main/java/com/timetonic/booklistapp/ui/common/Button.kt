@@ -16,6 +16,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.timetonic.booklistapp.ui.theme.BookListAppTheme
 
+/**
+ * Composable function for rendering a normal button.
+ * @param modifier The modifier for the button.
+ * @param text The text to display on the button.
+ * @param onClick The callback to be invoked when the button is clicked.
+ */
 @Composable
 fun NormalButton(
     modifier: Modifier = Modifier,
@@ -32,6 +38,14 @@ fun NormalButton(
     }
 }
 
+/**
+ * Composable function for rendering a clickable row with an icon and text.
+ * @param modifier The modifier for the clickable row.
+ * @param iconVector The vector representing the icon.
+ * @param iconContentDescription The content description for the icon.
+ * @param text The text to display alongside the icon.
+ * @param onClick The callback to be invoked when the row is clicked.
+ */
 @Composable
 fun SmallClickableWithIconAndText(
     modifier: Modifier = Modifier,

@@ -9,6 +9,10 @@ import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
+/**
+ * Class implementing the SessionManager interface using Android's DataStore for persistent storage of session-related data.
+ * @param context The context used for accessing DataStore.
+ */
 class SessionDataStore(
     private val context: Context,
 ) : SessionManager {

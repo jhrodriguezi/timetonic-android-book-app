@@ -16,17 +16,36 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+/**
+ * ViewModel for handling login functionality.
+ * @property timetonicRepository The repository for accessing Timetonic API methods.
+ */
 class LoginViewModel(
     private val timetonicRepository: TimetonicRepository
 ) : ViewModel() {
+
+    /**
+     * State flow representing the UI state for the login screen.
+     */
     private val _loginState = MutableStateFlow(LoginUiState())
     val loginState: StateFlow<LoginUiState> = _loginState.asStateFlow()
 
+    /**
+     * Email entered by the user.
+     */
     var email by mutableStateOf("")
         private set
+
+    /**
+     * Password entered by the user.
+     */
     var password by mutableStateOf("")
         private set
 
+    /**
+     * Handles various UI events triggered by the user.
+     * @param event The UI event to handle.
+     */
     fun onEvent(event: LoginUiEvent) {
         when (event) {
             is LoginUiEvent.EmailChanged -> updateEmail(event)
@@ -36,6 +55,9 @@ class LoginViewModel(
         }
     }
 
+    /**
+     * Closes the error banner.
+     */
     private fun closeBanner() {
         _loginState.update {
             it.copy(
@@ -44,6 +66,9 @@ class LoginViewModel(
         }
     }
 
+    /**
+     * Initiates the login process.
+     */
     private fun submit() {
         if (_loginState.value.isLoading) return
         if (!verifyFields()) return
@@ -78,6 +103,10 @@ class LoginViewModel(
         }
     }
 
+    /**
+     * Updates the email value and clears any associated error.
+     * @param event The email changed event.
+     */
     private fun updateEmail(event: LoginUiEvent.EmailChanged) {
         email = event.inputValue
         _loginState.update {
@@ -87,6 +116,10 @@ class LoginViewModel(
         }
     }
 
+    /**
+     * Updates the password value and clears any associated error.
+     * @param event The password changed event.
+     */
     private fun updatePassword(event: LoginUiEvent.PasswordChanged) {
         password = event.inputValue
         _loginState.update {
@@ -96,12 +129,20 @@ class LoginViewModel(
         }
     }
 
+    /**
+     * Verifies the email and password fields.
+     * @return True if both fields are valid, false otherwise.
+     */
     private fun verifyFields(): Boolean {
         val isEmailValid = verifyEmail()
         val isPasswordValid = verifyPassword()
         return isEmailValid && isPasswordValid
     }
 
+    /**
+     * Verifies the password field.
+     * @return True if the password field is valid, false otherwise.
+     */
     private fun verifyPassword(): Boolean {
         if (password.isBlank() || password.isEmpty()) {
             _loginState.update {
@@ -120,6 +161,10 @@ class LoginViewModel(
         return true
     }
 
+    /**
+     * Verifies the email field.
+     * @return True if the email field is valid, false otherwise.
+     */
     private fun verifyEmail(): Boolean {
         if (email.isBlank() || email.isEmpty()) {
             _loginState.update {
@@ -147,12 +192,21 @@ class LoginViewModel(
         return true
     }
 
+    /**
+     * Validates an email address against a regex pattern.
+     * @param email The email address to validate.
+     * @return True if the email address is valid, false otherwise.
+     */
     private fun isValidEmail(email: String): Boolean {
         val emailRegex = "^[A-Za-z](.*)([@]{1})(.{1,})(\\.)(.{1,})"
         return email.matches(emailRegex.toRegex())
     }
 }
 
+/**
+ * Factory class for creating instances of LoginViewModel.
+ * @property repository The repository for accessing Timetonic API methods.
+ */
 @Suppress("UNCHECKED_CAST")
 class LoginViewModelFactory(private val repository: TimetonicRepository) :
     ViewModelProvider.Factory {

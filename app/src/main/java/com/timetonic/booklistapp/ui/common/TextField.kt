@@ -23,6 +23,16 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import com.timetonic.booklistapp.R
 
+/**
+ * Composable function for rendering a password text field.
+ * @param modifier The modifier for the text field.
+ * @param value The current value of the text field.
+ * @param onValueChange The callback for when the value changes.
+ * @param label The label for the text field.
+ * @param isError Whether the text field is in an error state.
+ * @param errorText The error text to display.
+ * @param imeAction The action to perform when the IME action is triggered.
+ */
 @Composable
 fun PasswordTextField(
     modifier: Modifier = Modifier,
@@ -89,6 +99,16 @@ fun PasswordTextField(
     )
 }
 
+/**
+ * Composable function for rendering an email text field.
+ * @param modifier The modifier for the text field.
+ * @param value The current value of the text field.
+ * @param onValueChange The callback for when the value changes.
+ * @param label The label for the text field.
+ * @param isError Whether the text field is in an error state.
+ * @param errorText The error text to display.
+ * @param imeAction The action to perform when the IME action is triggered.
+ */
 @Composable
 fun EmailTextField(
     modifier: Modifier = Modifier,

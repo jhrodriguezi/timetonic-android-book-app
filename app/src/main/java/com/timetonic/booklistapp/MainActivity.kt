@@ -32,6 +32,10 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+/**
+ * Composable function for the main app navigation host.
+ * @param modifier The modifier for the navigation host.
+ */
 @Composable
 fun MainAppNavHost(
     modifier: Modifier = Modifier,
