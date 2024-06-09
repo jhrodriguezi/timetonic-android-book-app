@@ -1,5 +1,6 @@
 package com.timetonic.booklistapp.data.remote
 
+import com.timetonic.booklistapp.data.remote.model.AllBooksResponse
 import com.timetonic.booklistapp.data.remote.model.AppKeyResponse
 import com.timetonic.booklistapp.data.remote.model.OauthKeyResponse
 import com.timetonic.booklistapp.data.remote.model.SessKeyResponse
@@ -45,4 +46,16 @@ interface TimetonicApi {
         @Query("u_c") userId: String,
         @Query("oauthkey") oauthkey: String
     ): Result<SessKeyResponse>
+
+    @POST("live/api.php")
+    suspend fun getAllBooks(
+        @Query("req") req: String = "getAllBooks",
+        @Query("version") version: String,
+        @Query("o_u") oauthUserId: String,
+        @Query("u_c") userId: String,
+        @Query("sesskey") sesskey: String,
+        @Query("sstamp") serverStamp: String?,
+        @Query("b_c") bookCode: String?,
+        @Query("b_o") bookOwner: String?
+    ): Result<AllBooksResponse>
 }

@@ -1,8 +1,11 @@
 package com.timetonic.booklistapp.data.remote
 
+import com.timetonic.booklistapp.data.local.model.BookUi
 import com.timetonic.booklistapp.data.local.repository.TimetonicRepository
+import com.timetonic.booklistapp.data.remote.model.GetAllBooksParams
 import com.timetonic.booklistapp.data.remote.model.LogInParams
 import com.timetonic.booklistapp.data.remote.model.SessKeyResponse
+import com.timetonic.booklistapp.data.remote.model.toBookUi
 import com.timetonic.booklistapp.util.Result
 import com.timetonic.booklistapp.util.RetrofitHelper
 import com.timetonic.booklistapp.util.SessionManager
@@ -94,6 +97,34 @@ class TimetonicApiRepository(
 
             is Result.Error -> {
                 return Result.Error(sessKeyResult.throwable)
+            }
+        }
+    }
+
+    override suspend fun getAllBooks(dataRequest: GetAllBooksParams): Result<List<BookUi>> {
+        return when (val allBooksResult = timetonicApi.getAllBooks(
+            version = API_VERSION,
+            oauthUserId = sessionManager.oauthUserId.first(),
+            userId = sessionManager.oauthUserId.first(),
+            sesskey = sessionManager.sessKey.first(),
+            serverStamp = dataRequest.serverStamp,
+            bookOwner = dataRequest.bookOwner,
+            bookCode = dataRequest.bookCode
+        )) {
+            is Result.Success -> {
+                if (allBooksResult.data.status == Status.NOK.value) return Result.Error(
+                    IllegalStateException(
+                        "${allBooksResult.data.errorCode} ${allBooksResult.data.errorMsg}"
+                    )
+                )
+                return allBooksResult.data.allBooks?.books?.let { Result.Success(it.map { it.toBookUi() }) }
+                    ?: Result.Success(
+                        emptyList()
+                    )
+            }
+
+            is Result.Error -> {
+                Result.Error(allBooksResult.throwable)
             }
         }
     }
