@@ -21,22 +21,28 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.timetonic.booklistapp.R
+import com.timetonic.booklistapp.data.remote.TimetonicApiRepository
 import com.timetonic.booklistapp.ui.common.BannerErrorMessage
 import com.timetonic.booklistapp.ui.common.EmailTextField
 import com.timetonic.booklistapp.ui.common.NormalButton
 import com.timetonic.booklistapp.ui.common.PasswordTextField
 import com.timetonic.booklistapp.ui.common.TitleText
 import com.timetonic.booklistapp.ui.theme.BookListAppTheme
+import com.timetonic.booklistapp.util.SessionDataStore
 
 @Composable
 fun LoginScreen(
     onNavigateToAuthenticatedRoute: () -> Unit = {},
-    viewModel: LoginViewModel = viewModel()
+    timetonicApiRepository: TimetonicApiRepository = TimetonicApiRepository(
+        sessionManager = SessionDataStore(LocalContext.current)
+    ),
+    viewModel: LoginViewModel = viewModel(factory = LoginViewModelFactory(timetonicApiRepository))
 ) {
     val loginState by viewModel.loginState.collectAsState()
 

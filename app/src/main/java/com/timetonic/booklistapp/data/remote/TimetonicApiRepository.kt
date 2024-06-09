@@ -1,0 +1,82 @@
+package com.timetonic.booklistapp.data.remote
+
+import com.timetonic.booklistapp.data.local.repository.TimetonicRepository
+import com.timetonic.booklistapp.data.remote.model.LogInParams
+import com.timetonic.booklistapp.data.remote.model.SessKeyResponse
+import com.timetonic.booklistapp.util.Result
+import com.timetonic.booklistapp.util.RetrofitHelper
+import com.timetonic.booklistapp.util.SessionManager
+import kotlinx.coroutines.flow.first
+
+class TimetonicApiRepository(
+    private val timetonicApi: TimetonicApi = RetrofitHelper.getTimetonicService(),
+    private val sessionManager: SessionManager
+) : TimetonicRepository {
+    companion object {
+        private val API_VERSION: String
+            get() = "6.49q/6.49"
+    }
+
+    override suspend fun logIn(dataRequest: LogInParams): Result<SessKeyResponse> {
+        when (val appKeyResult = timetonicApi.createAppKey(
+            appname = "android",
+            version = API_VERSION
+        )) {
+            is Result.Success -> {
+                if (appKeyResult.data.status == Status.NOK.value) return Result.Error(
+                    IllegalStateException(
+                        "${appKeyResult.data.errorCode} ${appKeyResult.data.errorMsg}"
+                    )
+                )
+                appKeyResult.data.appKey?.let { sessionManager.saveAppKey(it) }
+            }
+
+            is Result.Error -> {
+                return Result.Error(appKeyResult.throwable)
+            }
+        }
+
+        when (val oauthKeyResult = timetonicApi.createOauthKey(
+            version = API_VERSION,
+            login = dataRequest.login,
+            password = dataRequest.password,
+            appkey = sessionManager.appKey.first()
+        )) {
+            is Result.Success -> {
+                if (oauthKeyResult.data.status == Status.NOK.value) return Result.Error(
+                    IllegalStateException(
+                        "${oauthKeyResult.data.errorCode} ${oauthKeyResult.data.errorMsg}"
+                    )
+                )
+                oauthKeyResult.data.oauthKey?.let { sessionManager.saveOauthKey(it) }
+                oauthKeyResult.data.oauthUserId?.let { sessionManager.saveOauthUserId(it) }
+            }
+
+            is Result.Error -> {
+                return Result.Error(oauthKeyResult.throwable)
+            }
+        }
+
+        val oauthUserId = sessionManager.oauthUserId.first()
+        when (val sessKeyResult = timetonicApi.createSessKey(
+            version = API_VERSION,
+            oauthUserId = oauthUserId,
+            userId = oauthUserId,
+            oauthkey = sessionManager.oauthKey.first()
+        )) {
+            is Result.Success -> {
+                if (sessKeyResult.data.status == Status.NOK.value) return Result.Error(
+                    IllegalStateException(
+                        "${sessKeyResult.data.errorCode} ${sessKeyResult.data.errorMsg}"
+                    )
+                )
+                sessKeyResult.data.sessKey?.let { sessionManager.saveSessKey(it) }
+                return Result.Success(sessKeyResult.data)
+            }
+
+            is Result.Error -> {
+                return Result.Error(sessKeyResult.throwable)
+            }
+        }
+    }
+}

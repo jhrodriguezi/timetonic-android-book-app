@@ -4,13 +4,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import com.timetonic.booklistapp.R
+import com.timetonic.booklistapp.data.local.repository.TimetonicRepository
+import com.timetonic.booklistapp.data.remote.model.LogInParams
+import com.timetonic.booklistapp.util.Result
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
-class LoginViewModel : ViewModel() {
+class LoginViewModel(
+    private val timetonicRepository: TimetonicRepository
+) : ViewModel() {
     private val _loginState = MutableStateFlow(LoginUiState())
     val loginState: StateFlow<LoginUiState> = _loginState.asStateFlow()
 
@@ -37,7 +45,37 @@ class LoginViewModel : ViewModel() {
     }
 
     private fun submit() {
+        if (_loginState.value.isLoading) return
+        if (!verifyFields()) return
 
+        viewModelScope.launch {
+            _loginState.update { it.copy(isLoading = true) }
+
+            val logInParams = LogInParams(
+                login = email,
+                password = password
+            )
+            when (val result = timetonicRepository.logIn(logInParams)) {
+                is Result.Success -> {
+                    _loginState.update {
+                        it.copy(
+                            isSuccessful = true,
+                            isLoading = false
+                        )
+                    }
+                }
+
+                is Result.Error -> {
+                    _loginState.update {
+                        it.copy(
+                            isError = true,
+                            errorMessage = result.throwable.message,
+                            isLoading = false
+                        )
+                    }
+                }
+            }
+        }
     }
 
     private fun updateEmail(event: LoginUiEvent.EmailChanged) {
@@ -112,5 +150,16 @@ class LoginViewModel : ViewModel() {
     private fun isValidEmail(email: String): Boolean {
         val emailRegex = "^[A-Za-z](.*)([@]{1})(.{1,})(\\.)(.{1,})"
         return email.matches(emailRegex.toRegex())
+    }
+}
+
+@Suppress("UNCHECKED_CAST")
+class LoginViewModelFactory(private val repository: TimetonicRepository) :
+    ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(LoginViewModel::class.java)) {
+            return LoginViewModel(repository) as T
+        }
+        throw IllegalArgumentException("Unknown view model class")
     }
 }
