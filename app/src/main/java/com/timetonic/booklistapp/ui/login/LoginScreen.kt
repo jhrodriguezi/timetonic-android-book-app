@@ -1,7 +1,9 @@
 package com.timetonic.booklistapp.ui.login
 
+import android.content.res.Configuration
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -20,7 +22,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.LayoutModifier
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -60,31 +66,39 @@ fun LoginScreen(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
+            .background(BookListAppTheme.colorScheme.background)
     ) {
         if (!(loginState.isLoading || loginState.isSuccessful)) Column {
             BannerErrorMessage(visibility = loginState.isError,
                 message = loginState.errorMessage,
                 onClose = { viewModel.onEvent(LoginUiEvent.CloseBannerErrorMessage) })
-            Spacer(modifier = Modifier.height(BookListAppTheme.dimens.paddingLarge))
-            LoginCard(email = viewModel.email,
-                errorFormEmail = loginState.errorFormEmail?.let { stringResource(it) },
-                onEmailChange = {
-                    viewModel.onEvent(
-                        LoginUiEvent.EmailChanged(
-                            it
+            Spacer(modifier = Modifier.size(BookListAppTheme.dimens.paddingLarge))
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = BookListAppTheme.dimens.paddingLarge),
+                contentAlignment = Alignment.Center
+            ) {
+                LoginCard(email = viewModel.email,
+                    errorFormEmail = loginState.errorFormEmail?.let { stringResource(it) },
+                    onEmailChange = {
+                        viewModel.onEvent(
+                            LoginUiEvent.EmailChanged(
+                                it
+                            )
                         )
-                    )
-                },
-                password = viewModel.password,
-                errorFormPassword = loginState.errorFormPassword?.let { stringResource(it) },
-                onPasswordChange = {
-                    viewModel.onEvent(
-                        LoginUiEvent.PasswordChanged(
-                            it
+                    },
+                    password = viewModel.password,
+                    errorFormPassword = loginState.errorFormPassword?.let { stringResource(it) },
+                    onPasswordChange = {
+                        viewModel.onEvent(
+                            LoginUiEvent.PasswordChanged(
+                                it
+                            )
                         )
-                    )
-                },
-                onSubmit = { viewModel.onEvent(LoginUiEvent.Submit) })
+                    },
+                    onSubmit = { viewModel.onEvent(LoginUiEvent.Submit) })
+            }
         }
         else CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
     }

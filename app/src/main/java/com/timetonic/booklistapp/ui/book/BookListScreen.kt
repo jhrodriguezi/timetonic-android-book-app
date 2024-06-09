@@ -68,7 +68,7 @@ fun BookListScreen(
     val pullState = rememberPullToRefreshState()
     if (pullState.isRefreshing) {
         LaunchedEffect(true) {
-            viewModel.onEvent(BookListUiEvent.onLoadBooks)
+            viewModel.onEvent(BookListUiEvent.OnLoadBooks)
             pullState.endRefresh()
         }
     }
