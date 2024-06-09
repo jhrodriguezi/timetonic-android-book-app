@@ -11,23 +11,41 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+/**
+ * ViewModel for managing the state and business logic of the Book List screen.
+ * @param timetonicRepository The repository for fetching book data.
+ */
 class BookListViewModel(
     private val timetonicRepository: TimetonicRepository
 ) : ViewModel() {
+
+    /**
+     * State flow for the Book List UI.
+     */
     private val _bookState = MutableStateFlow(BookListUiState())
     val bookState = _bookState.asStateFlow()
 
+    /**
+     * Initializes the view model by loading the books from the repository.
+     */
     init {
         loadBooks()
     }
 
+    /**
+     * Handles events triggered in the UI.
+     * @param event The event to handle.
+     */
     fun onEvent(event: BookListUiEvent) {
         when(event) {
-            is BookListUiEvent.onLoadBooks -> loadBooks()
+            is BookListUiEvent.OnLoadBooks -> loadBooks()
             is BookListUiEvent.CloseBannerErrorMessage -> closeBanner()
         }
     }
 
+    /**
+     * Closes the banner error message.
+     */
     private fun closeBanner() {
         _bookState.update {
             it.copy(
@@ -36,6 +54,9 @@ class BookListViewModel(
         }
     }
 
+    /**
+     * Loads the books from the repository.
+     */
     private fun loadBooks() {
         if (_bookState.value.isLoading) return
         viewModelScope.launch {
@@ -76,6 +97,10 @@ class BookListViewModel(
     }
 }
 
+/**
+ * Factory for creating instances of [BookListViewModel].
+ * @param repository The repository for fetching book data.
+ */
 @Suppress("UNCHECKED_CAST")
 class BookListViewModelFactory(private val repository: TimetonicRepository): ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

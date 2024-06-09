@@ -101,6 +101,12 @@ class TimetonicApiRepository(
         }
     }
 
+    /**
+     * Retrieves a list of books from the Timetonic API based on the provided [dataRequest].
+     * This function requires a valid session key and user ID stored in the [sessionManager].
+     * @param dataRequest Parameters for fetching books.
+     * @return Result containing a list of [BookUi] if successful, or an error if unsuccessful.
+     */
     override suspend fun getAllBooks(dataRequest: GetAllBooksParams): Result<List<BookUi>> {
         return when (val allBooksResult = timetonicApi.getAllBooks(
             version = API_VERSION,

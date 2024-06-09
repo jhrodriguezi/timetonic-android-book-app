@@ -20,6 +20,11 @@ interface TimetonicRepository {
         dataRequest: LogInParams
     ): Result<SessKeyResponse>
 
+    /**
+     * Retrieves all books from the Timetonic API.
+     * @param dataRequest The parameters for fetching books.
+     * @return Result containing a list of books.
+     */
     suspend fun getAllBooks(
         dataRequest: GetAllBooksParams
     ): Result<List<BookUi>>

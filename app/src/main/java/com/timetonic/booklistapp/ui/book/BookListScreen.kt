@@ -47,6 +47,12 @@ import com.timetonic.booklistapp.data.remote.TimetonicApiRepository
 import com.timetonic.booklistapp.ui.common.BannerErrorMessage
 import com.timetonic.booklistapp.ui.theme.BookListAppTheme
 
+/**
+ * Composable function for displaying a list of books fetched from the repository.
+ *
+ * @param timetonicApiRepository The repository for fetching book data.
+ * @param viewModel The view model for managing the state of the book list screen.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookListScreen(
@@ -113,6 +119,14 @@ fun BookListScreen(
     }
 }
 
+/**
+ * Composable function for displaying an individual book item.
+ *
+ * @param itemIndex The index of the book item.
+ * @param title The title of the book.
+ * @param imageUrl The URL of the book image.
+ * @param modifier The modifier for styling the book item.
+ */
 @Composable
 fun BookItem(
     itemIndex: Int, title: String, imageUrl: String?, modifier: Modifier = Modifier
